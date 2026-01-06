@@ -10,11 +10,11 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
+use MrPunyapal\FilamentSelectWithLazyLoading\Commands\FilamentSelectWithLazyLoadingCommand;
+use MrPunyapal\FilamentSelectWithLazyLoading\Testing\TestsFilamentSelectWithLazyLoading;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use MrPunyapal\FilamentSelectWithLazyLoading\Commands\FilamentSelectWithLazyLoadingCommand;
-use MrPunyapal\FilamentSelectWithLazyLoading\Testing\TestsFilamentSelectWithLazyLoading;
 
 class FilamentSelectWithLazyLoadingServiceProvider extends PackageServiceProvider
 {
