@@ -1,6 +1,6 @@
 <?php
 
-namespace MrPunyapal\FilamentSelectWithLazyLoading\Tests;
+namespace MrPunyapal\FilamentInfiniteSelect\Tests;
 
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
@@ -12,23 +12,13 @@ use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
-use MrPunyapal\FilamentSelectWithLazyLoading\FilamentSelectWithLazyLoadingServiceProvider;
+use MrPunyapal\FilamentInfiniteSelect\FilamentInfiniteSelectServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'MrPunyapal\\FilamentSelectWithLazyLoading\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
-        );
-    }
-
     protected function getPackageProviders($app)
     {
         return [
@@ -44,17 +34,12 @@ class TestCase extends Orchestra
             SupportServiceProvider::class,
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
-            FilamentSelectWithLazyLoadingServiceProvider::class,
+            FilamentInfiniteSelectServiceProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_filament-select-with-lazy-loading_table.php.stub';
-        $migration->up();
-        */
     }
 }
