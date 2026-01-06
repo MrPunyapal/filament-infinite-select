@@ -1,5 +1,5 @@
 {
-    "name": "mrpunyapal/filament-select-with-lazy-loading",
+    "name": "mrpunyapal/filament-infinite-select",
     "description": "A Filament Select component with infinite scroll lazy loading for options",
     "keywords": [
         "MrPunyapal",
@@ -9,10 +9,10 @@
         "infinite-scroll",
         "lazy-loading"
     ],
-    "homepage": "https://github.com/mrpunyapal/filament-select-with-lazy-loading",
+    "homepage": "https://github.com/mrpunyapal/filament-infinite-select",
     "support": {
-        "issues": "https://github.com/mrpunyapal/filament-select-with-lazy-loading/issues",
-        "source": "https://github.com/mrpunyapal/filament-select-with-lazy-loading"
+        "issues": "https://github.com/mrpunyapal/filament-infinite-select/issues",
+        "source": "https://github.com/mrpunyapal/filament-infinite-select"
     },
     "license": "MIT",
     "authors": [
@@ -41,13 +41,12 @@
     },
     "autoload": {
         "psr-4": {
-            "MrPunyapal\\FilamentSelectWithLazyLoading\\": "src/",
-            "MrPunyapal\\FilamentSelectWithLazyLoading\\Database\\Factories\\": "database/factories/"
+            "MrPunyapal\\FilamentInfiniteSelect\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MrPunyapal\\FilamentSelectWithLazyLoading\\Tests\\": "tests/"
+            "MrPunyapal\\FilamentInfiniteSelect\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -67,11 +66,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MrPunyapal\\FilamentSelectWithLazyLoading\\FilamentSelectWithLazyLoadingServiceProvider"
-            ],
-            "aliases": {
-                "FilamentSelectWithLazyLoading": "MrPunyapal\\FilamentSelectWithLazyLoading\\Facades\\FilamentSelectWithLazyLoading"
-            }
+                "MrPunyapal\\FilamentInfiniteSelect\\FilamentInfiniteSelectServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
