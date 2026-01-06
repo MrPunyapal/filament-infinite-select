@@ -14,7 +14,7 @@ class InfiniteSelect extends Select
 
     protected ?Closure $getOptionsWithPaginationUsing = null;
 
-    protected int|Closure $perPage = 15;
+    protected int | Closure $perPage = 15;
 
     protected function setUp(): void
     {
@@ -31,7 +31,7 @@ class InfiniteSelect extends Select
         return $this;
     }
 
-    public function perPage(int|Closure $perPage): static
+    public function perPage(int | Closure $perPage): static
     {
         $this->perPage = $perPage;
 
