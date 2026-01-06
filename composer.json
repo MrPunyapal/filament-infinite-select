@@ -1,10 +1,13 @@
 {
     "name": "mrpunyapal/filament-select-with-lazy-loading",
-    "description": "This is my package filament-select-with-lazy-loading",
+    "description": "A Filament Select component with infinite scroll lazy loading for options",
     "keywords": [
         "MrPunyapal",
         "laravel",
-        "filament-select-with-lazy-loading"
+        "filament",
+        "select",
+        "infinite-scroll",
+        "lazy-loading"
     ],
     "homepage": "https://github.com/mrpunyapal/filament-select-with-lazy-loading",
     "support": {
@@ -21,7 +24,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "filament/forms": "^3.0",
+        "filament/forms": "^4.0",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {
