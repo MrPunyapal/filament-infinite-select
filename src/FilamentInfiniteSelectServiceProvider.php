@@ -1,17 +1,17 @@
 <?php
 
-namespace MrPunyapal\FilamentSelectWithLazyLoading;
+namespace MrPunyapal\FilamentInfiniteSelect;
 
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentSelectWithLazyLoadingServiceProvider extends PackageServiceProvider
+class FilamentInfiniteSelectServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-select-with-lazy-loading';
+    public static string $name = 'filament-infinite-select';
 
-    public static string $viewNamespace = 'filament-select-with-lazy-loading';
+    public static string $viewNamespace = 'filament-infinite-select';
 
     public function configurePackage(Package $package): void
     {
@@ -32,7 +32,7 @@ class FilamentSelectWithLazyLoadingServiceProvider extends PackageServiceProvide
 
     protected function getAssetPackageName(): string
     {
-        return 'mrpunyapal/filament-select-with-lazy-loading';
+        return 'mrpunyapal/filament-infinite-select';
     }
 
     /**

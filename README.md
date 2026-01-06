@@ -1,8 +1,8 @@
 # Filament Infinite Select
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/mrpunyapal/filament-select-with-lazy-loading.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-select-with-lazy-loading)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mrpunyapal/filament-select-with-lazy-loading/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mrpunyapal/filament-select-with-lazy-loading/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-select-with-lazy-loading.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-select-with-lazy-loading)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mrpunyapal/filament-infinite-select/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mrpunyapal/filament-infinite-select/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
 
 A Filament Select component with infinite scroll lazy loading for options. Perfect for handling large datasets without loading all options at once.
 
@@ -14,7 +14,7 @@ A Filament Select component with infinite scroll lazy loading for options. Perfe
 ## Installation
 
 ```bash
-composer require mrpunyapal/filament-select-with-lazy-loading
+composer require mrpunyapal/filament-infinite-select
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ composer require mrpunyapal/filament-select-with-lazy-loading
 ### Basic Usage
 
 ```php
-use MrPunyapal\FilamentSelectWithLazyLoading\InfiniteSelect;
+use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_id')
     ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {

@@ -62,7 +62,7 @@
         <div
             x-ignore
             ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-select-with-lazy-loading') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select') }}"
             x-data="infiniteSelectFormComponent({
                 canOptionLabelsWrap: @js($canOptionLabelsWrap),
                 canSelectPlaceholder: @js($canSelectPlaceholder),

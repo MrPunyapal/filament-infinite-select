@@ -1,6 +1,6 @@
 <?php
 
-namespace MrPunyapal\FilamentSelectWithLazyLoading;
+namespace MrPunyapal\FilamentInfiniteSelect;
 
 use Closure;
 use Filament\Forms\Components\Select;
