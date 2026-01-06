@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace MrPunyapal\FilamentSelectWithLazyLoading\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentSelectWithLazyLoadingCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-select-with-lazy-loading';
 
     public $description = 'My command';
 
