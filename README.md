@@ -1,53 +1,95 @@
-# This is my package filament-select-with-lazy-loading
+# Filament Infinite Select
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mrpunyapal/filament-select-with-lazy-loading.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-select-with-lazy-loading)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mrpunyapal/filament-select-with-lazy-loading/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mrpunyapal/filament-select-with-lazy-loading/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/mrpunyapal/filament-select-with-lazy-loading/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/mrpunyapal/filament-select-with-lazy-loading/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-select-with-lazy-loading.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-select-with-lazy-loading)
 
+A Filament Select component with infinite scroll lazy loading for options. Perfect for handling large datasets without loading all options at once.
 
+## Requirements
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+- PHP 8.1+
+- Filament 4.x
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require mrpunyapal/filament-select-with-lazy-loading
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="filament-select-with-lazy-loading-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filament-select-with-lazy-loading-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="filament-select-with-lazy-loading-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
 ## Usage
 
+### Basic Usage
+
 ```php
-$filamentSelectWithLazyLoading = new MrPunyapal\FilamentSelectWithLazyLoading();
-echo $filamentSelectWithLazyLoading->echoPhrase('Hello, MrPunyapal!');
+use MrPunyapal\FilamentSelectWithLazyLoading\InfiniteSelect;
+
+InfiniteSelect::make('user_id')
+    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+        $query = User::query();
+        
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        
+        $total = $query->count();
+        $options = $query
+            ->orderBy('name')
+            ->offset($offset)
+            ->limit($limit)
+            ->pluck('name', 'id')
+            ->all();
+        
+        return [
+            'options' => $options,
+            'hasMore' => ($offset + $limit) < $total,
+        ];
+    })
+    ->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
+```
+
+### Customizing Per Page
+
+```php
+InfiniteSelect::make('user_id')
+    ->perPage(25)
+    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+        // ...
+    });
+```
+
+### With Multiple Selection
+
+```php
+InfiniteSelect::make('user_ids')
+    ->multiple()
+    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+        // ...
+    })
+    ->getOptionLabelsUsing(fn (array $values) => User::whereIn('id', $values)->pluck('name', 'id')->all());
+```
+
+### Closure Parameters
+
+The `getOptionsWithPaginationUsing` closure receives the following parameters:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `$offset` | `int` | The current offset for pagination |
+| `$limit` | `int` | The number of items to fetch (from `perPage()`) |
+| `$search` | `?string` | The current search query, if any |
+
+Plus all standard Filament injection parameters (`$component`, `$get`, `$livewire`, `$record`, etc.)
+
+### Return Value
+
+The closure should return an array with:
+
+```php
+[
+    'options' => ['value1' => 'Label 1', 'value2' => 'Label 2'],
+    'hasMore' => true, // Whether there are more options to load
+]
 ```
 
 ## Testing
