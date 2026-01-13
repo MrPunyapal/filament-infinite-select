@@ -41,7 +41,7 @@ class FilamentInfiniteSelectServiceProvider extends PackageServiceProvider
     protected function getAssets(): array
     {
         return [
-            AlpineComponent::make('infinite-select', __DIR__ . '/../resources/js/index.js'),
+            AlpineComponent::make('infinite-select', __DIR__ . '/../resources/dist/infinite-select.js'),
         ];
     }
 }
