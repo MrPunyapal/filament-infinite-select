@@ -10,7 +10,7 @@ use Livewire\Attributes\Renderless;
 
 class InfiniteSelect extends Select
 {
-    protected string $view = 'filament-select-with-lazy-loading::infinite-select';
+    protected string $view = 'filament-infinite-select::infinite-select';
 
     protected ?Closure $getOptionsWithPaginationUsing = null;
 
