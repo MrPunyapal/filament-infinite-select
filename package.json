@@ -7,9 +7,5 @@
     },
     "devDependencies": {
         "esbuild": "^0.19.2"
-    },
-    "dependencies": {
-        "@floating-ui/dom": "^1.7.4",
-        "sortablejs": "^1.15.6"
     }
 }

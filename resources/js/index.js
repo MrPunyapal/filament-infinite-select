@@ -1,145 +1,69 @@
-import { Select } from './Select.js'
-
-export default function infiniteSelectFormComponent({
-    canOptionLabelsWrap,
-    canSelectPlaceholder,
-    getOptionLabelUsing,
-    getOptionLabelsUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
+/**
+ * Infinite scroll detection for Filament Select component
+ * This is a minimal enhancement that hooks into Filament's existing Select
+ * and adds pagination support via Livewire calls
+ */
+export default function infiniteScrollSelect({
     getPaginatedOptionsUsing,
-    hasDynamicOptions,
-    hasDynamicSearchResults,
-    hasInitialNoOptionsMessage,
-    hasInfiniteScroll,
-    initialOptionLabel,
-    initialOptionLabels,
-    initialState,
-    isAutofocused,
-    isDisabled,
-    isHtmlAllowed,
-    isMultiple,
-    isReorderable,
-    isSearchable,
-    livewireId,
-    loadingMessage,
-    maxItems,
-    maxItemsMessage,
-    noOptionsMessage,
-    noSearchResultsMessage,
-    options,
-    optionsLimit,
     perPage,
-    placeholder,
-    position,
-    searchDebounce,
-    searchingMessage,
-    searchPrompt,
-    searchableOptionFields,
-    state,
-    statePath,
 }) {
     return {
-        select: null,
-        state,
-        isLoadingMore: false,
         offset: 0,
         hasMore: true,
+        isLoadingMore: false,
         currentSearch: null,
 
         init() {
-            this.select = new Select({
-                canOptionLabelsWrap,
-                canSelectPlaceholder,
-                element: this.$refs.select,
-                getOptionLabelUsing,
-                getOptionLabelsUsing,
-                getOptionsUsing: hasInfiniteScroll ? null : getOptionsUsing,
-                getSearchResultsUsing: hasInfiniteScroll ? null : getSearchResultsUsing,
-                hasDynamicOptions: hasInfiniteScroll ? false : hasDynamicOptions,
-                hasDynamicSearchResults: hasInfiniteScroll ? false : hasDynamicSearchResults,
-                hasInitialNoOptionsMessage,
-                initialOptionLabel,
-                initialOptionLabels,
-                initialState,
-                isAutofocused,
-                isDisabled,
-                isHtmlAllowed,
-                isMultiple,
-                isReorderable,
-                isSearchable,
-                livewireId,
-                loadingMessage,
-                maxItems,
-                maxItemsMessage,
-                noOptionsMessage,
-                noSearchResultsMessage,
-                onStateChange: (newState) => {
-                    this.state = newState
-                },
-                options,
-                optionsLimit,
-                placeholder,
-                position,
-                searchableOptionFields,
-                searchDebounce,
-                searchingMessage,
-                searchPrompt,
-                state: this.state,
-                statePath,
+            // Wait for the dropdown to be rendered
+            this.$nextTick(() => {
+                this.attachScrollListener()
+                this.attachSearchListener()
             })
+        },
 
-            this.$watch('state', (newState) => {
-                if (this.select && this.select.state !== newState) {
-                    this.select.state = newState
-                    this.select.updateSelectedDisplay()
-                    this.select.renderOptions()
+        attachScrollListener() {
+            // Find the dropdown list element rendered by Filament's Select
+            const container = this.$el
+
+            // Watch for dropdown open and attach scroll listener
+            const observer = new MutationObserver(() => {
+                const dropdown = container.querySelector('.fi-dropdown-panel')
+                if (dropdown && !dropdown.hasAttribute('data-scroll-attached')) {
+                    dropdown.setAttribute('data-scroll-attached', 'true')
+                    dropdown.addEventListener('scroll', () => this.handleScroll(dropdown))
+
+                    // Load initial page when dropdown opens
+                    if (this.offset === 0 && this.hasMore) {
+                        this.loadMoreOptions()
+                    }
                 }
             })
 
-            if (hasInfiniteScroll) {
-                this.setupInfiniteScroll()
-            }
+            observer.observe(container, { childList: true, subtree: true })
         },
 
-        setupInfiniteScroll() {
-            // Override search handling for infinite scroll
-            if (this.select.searchInput) {
-                this.select.searchInput.addEventListener('input', async (event) => {
-                    if (this.select.isDisabled) return
+        attachSearchListener() {
+            const container = this.$el
 
-                    this.currentSearch = event.target.value
-                    this.offset = 0
-                    this.hasMore = true
-
-                    // Clear current options
-                    this.select.options = []
-                    this.select.renderOptions()
-
-                    // Load first page of results
-                    await this.loadMoreOptions()
-                })
-            }
-
-            // Add scroll listener to dropdown
-            this.select.dropdown.addEventListener('scroll', () => {
-                this.handleScroll()
+            // Watch for search input changes
+            const observer = new MutationObserver(() => {
+                const searchInput = container.querySelector('.fi-select-input-search-ctn input')
+                if (searchInput && !searchInput.hasAttribute('data-search-attached')) {
+                    searchInput.setAttribute('data-search-attached', 'true')
+                    searchInput.addEventListener('input', (e) => {
+                        this.currentSearch = e.target.value
+                        this.offset = 0
+                        this.hasMore = true
+                    })
+                }
             })
 
-            // Load initial options when dropdown opens
-            const originalOpen = this.select.openDropdown.bind(this.select)
-            this.select.openDropdown = async () => {
-                originalOpen()
-                if (this.offset === 0 && this.hasMore) {
-                    await this.loadMoreOptions()
-                }
-            }
+            observer.observe(container, { childList: true, subtree: true })
         },
 
-        handleScroll() {
+        handleScroll(dropdown) {
             if (this.isLoadingMore || !this.hasMore) return
 
-            const dropdown = this.select.dropdown
             const threshold = 50
             const scrollBottom = dropdown.scrollHeight - dropdown.scrollTop - dropdown.clientHeight
 
@@ -158,9 +82,8 @@ export default function infiniteSelectFormComponent({
                 const newOptions = result.options ?? []
                 this.hasMore = result.hasMore ?? false
 
-                // Append new options
-                this.select.options = [...this.select.options, ...newOptions]
-                this.select.renderOptions()
+                // Append new options to the dropdown
+                this.appendOptionsToDropdown(newOptions)
 
                 this.offset += perPage
             } catch (error) {
@@ -170,11 +93,30 @@ export default function infiniteSelectFormComponent({
             }
         },
 
-        destroy() {
-            if (this.select) {
-                this.select.destroy()
-                this.select = null
-            }
+        appendOptionsToDropdown(options) {
+            const dropdown = this.$el.querySelector('.fi-dropdown-panel ul')
+            if (!dropdown) return
+
+            options.forEach(option => {
+                const li = document.createElement('li')
+                li.className = 'fi-dropdown-list-item fi-select-input-option'
+                li.setAttribute('role', 'option')
+                li.setAttribute('data-value', option.value)
+                li.setAttribute('tabindex', '0')
+
+                const span = document.createElement('span')
+                span.textContent = option.label
+                li.appendChild(span)
+
+                li.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    // Dispatch custom event that Filament's Select can handle
+                    this.$dispatch('select-option', { value: option.value, label: option.label })
+                })
+
+                dropdown.appendChild(li)
+            })
         },
     }
 }
