@@ -21,17 +21,6 @@ class InfiniteSelect extends Select
 
         $this->native(false);
         $this->searchable();
-        
-        // Add infinite scroll Alpine component wrapper
-        $this->registerListeners([
-            'select-option' => [
-                fn (InfiniteSelect $component, string $value) => $component->state(
-                    $component->isMultiple()
-                        ? array_merge($component->getState() ?? [], [$value])
-                        : $value
-                ),
-            ],
-        ]);
     }
 
     public function getOptionsWithPaginationUsing(?Closure $callback): static
