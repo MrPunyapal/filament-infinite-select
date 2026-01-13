@@ -5,13 +5,12 @@ namespace MrPunyapal\FilamentInfiniteSelect;
 use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Support\Arrayable;
 use Livewire\Attributes\Renderless;
 
 class InfiniteSelect extends Select
 {
-    protected string $view = 'filament-infinite-select::infinite-select';
-
     protected ?Closure $getOptionsWithPaginationUsing = null;
 
     protected int | Closure $perPage = 15;
@@ -22,6 +21,17 @@ class InfiniteSelect extends Select
 
         $this->native(false);
         $this->searchable();
+        
+        // Add infinite scroll Alpine component wrapper
+        $this->registerListeners([
+            'select-option' => [
+                fn (InfiniteSelect $component, string $value) => $component->state(
+                    $component->isMultiple()
+                        ? array_merge($component->getState() ?? [], [$value])
+                        : $value
+                ),
+            ],
+        ]);
     }
 
     public function getOptionsWithPaginationUsing(?Closure $callback): static
@@ -87,5 +97,27 @@ class InfiniteSelect extends Select
             'options' => $this->transformOptionsForJs($result['options']),
             'hasMore' => $result['hasMore'],
         ];
+    }
+
+    public function getExtraAlpineAttributes(): array
+    {
+        $attributes = parent::getExtraAlpineAttributes();
+
+        if ($this->hasOptionsWithPagination()) {
+            $key = $this->getKey();
+            $perPage = $this->getPerPage();
+            $src = FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select');
+
+            $attributes['x-load'] = '';
+            $attributes['x-load-src'] = $src;
+            $attributes['x-data'] = "infiniteScrollSelect({
+                getPaginatedOptionsUsing: async (offset, search) => {
+                    return await \$wire.callSchemaComponentMethod('{$key}', 'getPaginatedOptionsForJs', { offset, search })
+                },
+                perPage: {$perPage},
+            })";
+        }
+
+        return $attributes;
     }
 }
