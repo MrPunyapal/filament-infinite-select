@@ -1,7 +1,15 @@
 {
     "private": true,
     "type": "module",
+    "scripts": {
+        "build": "esbuild resources/js/index.js --bundle --minify --keep-names --format=esm --outfile=resources/dist/infinite-select.js",
+        "dev": "esbuild resources/js/index.js --bundle --keep-names --format=esm --outfile=resources/dist/infinite-select.js --watch"
+    },
     "devDependencies": {
         "esbuild": "^0.19.2"
+    },
+    "dependencies": {
+        "@floating-ui/dom": "^1.7.4",
+        "sortablejs": "^1.15.6"
     }
 }
