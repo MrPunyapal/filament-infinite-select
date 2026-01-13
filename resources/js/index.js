@@ -1,3 +1,5 @@
+import { Select } from './Select.js'
+
 export default function infiniteSelectFormComponent({
     canOptionLabelsWrap,
     canSelectPlaceholder,
@@ -39,146 +41,115 @@ export default function infiniteSelectFormComponent({
 }) {
     return {
         select: null,
-        selectedOptions: [],
-        isLoading: false,
+        state,
         isLoadingMore: false,
         offset: 0,
         hasMore: true,
         currentSearch: null,
-        observer: null,
-        sentinelEl: null,
 
         init() {
-            this.initSelect()
-            this.setupInfiniteScroll()
-        },
-
-        initSelect() {
-            this.select = window.Filament.createSelect(this.$refs.select, {
-                allowHtml: isHtmlAllowed,
-                allowWrap: canOptionLabelsWrap,
-                autofocus: isAutofocused,
-                disabled: isDisabled,
-                items: options,
+            this.select = new Select({
+                canOptionLabelsWrap,
+                canSelectPlaceholder,
+                element: this.$refs.select,
+                getOptionLabelUsing,
+                getOptionLabelsUsing,
+                getOptionsUsing: hasInfiniteScroll ? null : getOptionsUsing,
+                getSearchResultsUsing: hasInfiniteScroll ? null : getSearchResultsUsing,
+                hasDynamicOptions: hasInfiniteScroll ? false : hasDynamicOptions,
+                hasDynamicSearchResults: hasInfiniteScroll ? false : hasDynamicSearchResults,
+                hasInitialNoOptionsMessage,
+                initialOptionLabel,
+                initialOptionLabels,
+                initialState,
+                isAutofocused,
+                isDisabled,
+                isHtmlAllowed,
+                isMultiple,
+                isReorderable,
+                isSearchable,
+                livewireId,
                 loadingMessage,
-                maxItemMessage: maxItemsMessage,
-                maxItems: maxItems ?? (isMultiple ? null : 1),
-                noOptionsMessage: hasInitialNoOptionsMessage ? noOptionsMessage : null,
+                maxItems,
+                maxItemsMessage,
+                noOptionsMessage,
                 noSearchResultsMessage,
-                placeholder: canSelectPlaceholder ? placeholder : null,
+                onStateChange: (newState) => {
+                    this.state = newState
+                },
+                options,
+                optionsLimit,
+                placeholder,
                 position,
-                searchable: isSearchable,
-                searchableFields: searchableOptionFields ?? ['label'],
+                searchableOptionFields,
                 searchDebounce,
-                searchMessage: searchingMessage,
-                searchPlaceholder: searchPrompt,
-                sortable: isReorderable,
-
-                onDropdownOpen: async () => {
-                    if (hasInfiniteScroll && this.offset === 0 && this.hasMore) {
-                        await this.loadMoreOptions()
-                    }
-                },
-
-                onSearch: async (search) => {
-                    this.currentSearch = search
-
-                    if (hasInfiniteScroll) {
-                        this.resetPagination()
-                        await this.loadMoreOptions()
-                        return
-                    }
-
-                    if (!hasDynamicSearchResults) {
-                        return
-                    }
-
-                    this.isLoading = true
-                    this.select.setOptions(await getSearchResultsUsing(search))
-                    this.isLoading = false
-                },
-
-                onChange: (value) => {
-                    state = isMultiple
-                        ? value.map((option) => option.value)
-                        : value?.value ?? null
-
-                    this.selectedOptions = isMultiple
-                        ? value
-                        : (value ? [value] : [])
-                },
+                searchingMessage,
+                searchPrompt,
+                state: this.state,
+                statePath,
             })
 
-            this.setInitialState()
-        },
+            this.$watch('state', (newState) => {
+                if (this.select && this.select.state !== newState) {
+                    this.select.state = newState
+                    this.select.updateSelectedDisplay()
+                    this.select.renderOptions()
+                }
+            })
 
-        setInitialState() {
-            if (isMultiple) {
-                let labels = initialOptionLabels ?? []
-                let values = initialState ?? []
-
-                this.selectedOptions = values.map((value, index) => ({
-                    value: String(value),
-                    label: labels[index]?.label ?? String(value),
-                }))
-            } else if (initialState !== null && initialState !== undefined) {
-                this.selectedOptions = [{
-                    value: String(initialState),
-                    label: initialOptionLabel ?? String(initialState),
-                }]
+            if (hasInfiniteScroll) {
+                this.setupInfiniteScroll()
             }
-
-            this.selectedOptions.forEach((option) => {
-                this.select.selectOption(option)
-            })
         },
 
         setupInfiniteScroll() {
-            if (!hasInfiniteScroll) {
-                return
+            // Override search handling for infinite scroll
+            if (this.select.searchInput) {
+                this.select.searchInput.addEventListener('input', async (event) => {
+                    if (this.select.isDisabled) return
+
+                    this.currentSearch = event.target.value
+                    this.offset = 0
+                    this.hasMore = true
+
+                    // Clear current options
+                    this.select.options = []
+                    this.select.renderOptions()
+
+                    // Load first page of results
+                    await this.loadMoreOptions()
+                })
             }
 
-            this.$watch('select', () => {
-                this.$nextTick(() => {
-                    const dropdown = this.$refs.select.querySelector('.choices__list--dropdown .choices__list')
-                    if (!dropdown) {
-                        return
-                    }
-
-                    dropdown.addEventListener('scroll', () => {
-                        this.handleScroll(dropdown)
-                    })
-                })
+            // Add scroll listener to dropdown
+            this.select.dropdown.addEventListener('scroll', () => {
+                this.handleScroll()
             })
+
+            // Load initial options when dropdown opens
+            const originalOpen = this.select.openDropdown.bind(this.select)
+            this.select.openDropdown = async () => {
+                originalOpen()
+                if (this.offset === 0 && this.hasMore) {
+                    await this.loadMoreOptions()
+                }
+            }
         },
 
-        handleScroll(container) {
-            if (this.isLoadingMore || !this.hasMore) {
-                return
-            }
+        handleScroll() {
+            if (this.isLoadingMore || !this.hasMore) return
 
+            const dropdown = this.select.dropdown
             const threshold = 50
-            const scrollBottom = container.scrollHeight - container.scrollTop - container.clientHeight
+            const scrollBottom = dropdown.scrollHeight - dropdown.scrollTop - dropdown.clientHeight
 
             if (scrollBottom < threshold) {
                 this.loadMoreOptions()
             }
         },
 
-        resetPagination() {
-            this.offset = 0
-            this.hasMore = true
-            this.select.clearOptions()
-
-            this.selectedOptions.forEach((option) => {
-                this.select.selectOption(option)
-            })
-        },
-
         async loadMoreOptions() {
-            if (this.isLoadingMore || !this.hasMore) {
-                return
-            }
+            if (this.isLoadingMore || !this.hasMore) return
 
             this.isLoadingMore = true
 
@@ -187,9 +158,9 @@ export default function infiniteSelectFormComponent({
                 const newOptions = result.options ?? []
                 this.hasMore = result.hasMore ?? false
 
-                newOptions.forEach((option) => {
-                    this.select.appendOption(option)
-                })
+                // Append new options
+                this.select.options = [...this.select.options, ...newOptions]
+                this.select.renderOptions()
 
                 this.offset += perPage
             } catch (error) {
@@ -199,30 +170,11 @@ export default function infiniteSelectFormComponent({
             }
         },
 
-        enable() {
-            this.select?.enable()
-        },
-
-        disable() {
-            this.select?.disable()
-        },
-
-        refreshSelectedOptionLabel: async function () {
-            if (isMultiple) {
-                const labels = await getOptionLabelsUsing()
-                this.selectedOptions = labels ?? []
-                return
-            }
-
-            const label = await getOptionLabelUsing()
-            if (label && this.selectedOptions.length) {
-                this.selectedOptions[0].label = label
-            }
-        },
-
         destroy() {
-            this.select?.destroy()
-            this.observer?.disconnect()
+            if (this.select) {
+                this.select.destroy()
+                this.select = null
+            }
         },
     }
 }
