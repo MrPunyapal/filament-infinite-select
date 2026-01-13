@@ -11,6 +11,8 @@ use Livewire\Attributes\Renderless;
 
 class InfiniteSelect extends Select
 {
+    protected string $view = 'filament-infinite-select::infinite-select';
+
     protected ?Closure $getOptionsWithPaginationUsing = null;
 
     protected int | Closure $perPage = 15;
@@ -88,25 +90,8 @@ class InfiniteSelect extends Select
         ];
     }
 
-    public function getExtraAlpineAttributes(): array
+    public function getInfiniteScrollAlpineSrc(): string
     {
-        $attributes = parent::getExtraAlpineAttributes();
-
-        if ($this->hasOptionsWithPagination()) {
-            $key = $this->getKey();
-            $perPage = $this->getPerPage();
-            $src = FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select');
-
-            $attributes['x-load'] = '';
-            $attributes['x-load-src'] = $src;
-            $attributes['x-data'] = "infiniteScrollSelect({
-                getPaginatedOptionsUsing: async (offset, search) => {
-                    return await \$wire.callSchemaComponentMethod('{$key}', 'getPaginatedOptionsForJs', { offset, search })
-                },
-                perPage: {$perPage},
-            })";
-        }
-
-        return $attributes;
+        return FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select');
     }
 }
