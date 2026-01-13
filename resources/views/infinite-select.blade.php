@@ -50,7 +50,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
-        :x-on:focus-input.stop="'\$el.querySelector(\'.fi-select-input-btn\')?.focus()'"
+        x-on:focus-input.stop="$el.querySelector('.fi-select-input-btn')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class([
@@ -61,8 +61,8 @@
     >
         <div
             x-ignore
-            ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select') }}"
+            x-load
+            x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('infinite-select', 'mrpunyapal/filament-infinite-select') }}"
             x-data="infiniteSelectFormComponent({
                 canOptionLabelsWrap: @js($canOptionLabelsWrap),
                 canSelectPlaceholder: @js($canSelectPlaceholder),
