@@ -1,48 +1,26 @@
 # Filament Infinite Select
 
-A Filament Select component with infinite scroll lazy loading for options. Perfect for handling large datasets without loading all options at once.
+A Filament form component that loads select options one page at a time as the user scrolls. Use it when a select can contain hundreds or thousands of options and loading all of them at once is too slow.
 
-Instead of hydrating thousands of options into the dropdown, **InfiniteSelect** loads one page at a time as the user scrolls — with debounced server-side search, preloading support, and full compatibility with Filament's native select behavior.
+## How it works
 
-## Features
+You provide a closure that receives an offset, a limit, and the current search term, and returns one page of options. The component handles the rest:
 
-- Infinite scroll pagination over any dataset (Eloquent queries, APIs, arrays)
-- Configurable page size, scroll threshold, and search debounce
-- Optional server-side preload of the first page
-- Single and multiple selection
-- Works in panels and headless Livewire forms — ships as a registered Filament asset, no view publishing required
-- Scroll position restore, loading and error states out of the box
-- Supports Filament v4 and v5
+- The first page loads when the dropdown opens (or renders server side with `preloadFirstPage()`)
+- Scrolling near the bottom of the list fetches the next page and appends it
+- Search input queries your closure with debouncing, resets to page one, and replaces the list
+- Saved values resolve their labels through `getOptionLabelUsing()` or `getOptionLabelsUsing()`, so they display even when they are not in the loaded pages
+- The scroll position is kept when the dropdown is closed and reopened
 
 ## Requirements
 
 | Package | Version |
 |---------|---------|
-| PHP | 8.2+ |
-| Filament Forms | ^4.0 \| ^5.0 |
+| PHP | 8.2 or higher |
+| Laravel | 11.28 or higher |
+| Filament Forms | 4.x or 5.x |
 
-## Quick example
-
-```php
-use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
-
-InfiniteSelect::make('user_id')
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
-        $query = User::query()->orderBy('name');
-
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%");
-        }
-
-        $total = (clone $query)->count();
-
-        return [
-            'options' => $query->skip($offset)->take($limit)->pluck('name', 'id')->all(),
-            'hasMore' => ($offset + $limit) < $total,
-        ];
-    })
-    ->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
-```
+The component works in panels and in standalone Livewire applications that use Filament forms.
 
 ## Credits
 

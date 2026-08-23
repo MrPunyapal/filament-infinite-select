@@ -1,135 +1,51 @@
 # Filament Infinite Select
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mrpunyapal/filament-infinite-select/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mrpunyapal/filament-infinite-select/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
+![PHP Version Compatibility](https://badge.laravel.cloud/php-badge/mrpunyapal/filament-infinite-select)
+![Laravel Version Compatibility](https://badge.laravel.cloud/badge/mrpunyapal/filament-infinite-select)
 
-A Filament Select component with infinite scroll lazy loading for options. Perfect for handling large datasets without loading all options at once.
+A Filament form component that loads select options one page at a time as the user scrolls. Use it when a select can contain hundreds or thousands of options and loading them all at once is too slow.
 
-📖 **[Read the documentation](https://mrpunyapal.github.io/filament-infinite-select)**
+Options are fetched through a closure you provide. The dropdown appends each page on scroll, search queries your closure server side with debouncing, and saved values resolve their labels through separate closures so they display correctly even when they are not on the first page.
 
 ## Requirements
 
-- PHP 8.2+
-- Filament 4.x / 5.x
+- PHP 8.2 or higher
+- Filament 4.x or 5.x
+- Laravel 11.28 or higher
 
-Works in any Filament context — panels, standalone Livewire forms (headless), or custom schema components. The Alpine component ships as a registered Filament asset, so no view publishing is required.
+## Documentation
 
-## Installation
+The documentation is available at [mrpunyapal.github.io/filament-infinite-select](https://mrpunyapal.github.io/filament-infinite-select).
 
-```bash
-composer require mrpunyapal/filament-infinite-select
-```
+- [Installation](https://mrpunyapal.github.io/filament-infinite-select/installation)
+- [Usage](https://mrpunyapal.github.io/filament-infinite-select/usage)
+- [Configuration](https://mrpunyapal.github.io/filament-infinite-select/configuration)
+- [Multiple selection](https://mrpunyapal.github.io/filament-infinite-select/multiple-selection)
+- [Troubleshooting](https://mrpunyapal.github.io/filament-infinite-select/troubleshooting)
 
-Then publish the JavaScript asset:
-
-```bash
-php artisan filament:assets
-```
-
-> **Tip:** To keep assets up to date automatically after every `composer update`, add this to your project's `composer.json`:
->
-> ```json
-> "post-autoload-dump": [
->     "@php artisan filament:assets"
-> ]
-> ```
->
-> (merging with any existing `post-autoload-dump` entries)
-
-## Usage
-
-### Basic Usage
+## Quick example
 
 ```php
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_id')
     ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
-        $query = User::query();
-        
+        $query = User::query()->orderBy('name');
+
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
         }
-        
-        $total = $query->count();
-        $options = $query
-            ->orderBy('name')
-            ->offset($offset)
-            ->limit($limit)
-            ->pluck('name', 'id')
-            ->all();
-        
+
+        $total = (clone $query)->count();
+
         return [
-            'options' => $options,
+            'options' => $query->skip($offset)->take($limit)->pluck('name', 'id')->all(),
             'hasMore' => ($offset + $limit) < $total,
         ];
     })
     ->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
-```
-
-### Customizing Per Page
-
-```php
-InfiniteSelect::make('user_id')
-    ->perPage(25)
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
-        // ...
-    });
-```
-
-### Available Methods
-
-| Method | Default | Description |
-|--------|---------|-------------|
-| `perPage(int \| Closure)` | `15` | Number of options to fetch per page |
-| `preloadFirstPage(bool \| Closure)` | `false` | Load the first page server-side during render, instead of via a Livewire round-trip when the dropdown opens |
-| `searchDebounce(int \| Closure)` | `300` | Debounce delay in milliseconds for the search input |
-| `scrollThreshold(int \| Closure)` | `50` | Distance in pixels from the bottom of the dropdown that triggers loading the next page |
-
-```php
-InfiniteSelect::make('user_id')
-    ->perPage(25)
-    ->searchDebounce(500)
-    ->scrollThreshold(100)
-    ->preloadFirstPage()
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
-        // ...
-    });
-```
-
-### With Multiple Selection
-
-```php
-InfiniteSelect::make('user_ids')
-    ->multiple()
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
-        // ...
-    })
-    ->getOptionLabelsUsing(fn (array $values) => User::whereIn('id', $values)->pluck('name', 'id')->all());
-```
-
-### Closure Parameters
-
-The `getOptionsWithPaginationUsing` closure receives the following parameters:
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `$offset` | `int` | The current offset for pagination |
-| `$limit` | `int` | The number of items to fetch (from `perPage()`) |
-| `$search` | `?string` | The current search query, if any |
-
-Plus all standard Filament injection parameters (`$component`, `$get`, `$livewire`, `$record`, etc.)
-
-### Return Value
-
-The closure should return an array with:
-
-```php
-[
-    'options' => ['value1' => 'Label 1', 'value2' => 'Label 2'],
-    'hasMore' => true, // Whether there are more options to load
-]
 ```
 
 ## Testing

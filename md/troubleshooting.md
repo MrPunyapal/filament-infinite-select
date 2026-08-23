@@ -1,42 +1,48 @@
 # Troubleshooting
 
-## Select renders but options never load
+## The select renders but options never load
 
-The most common cause: the JavaScript asset was never published. The browser requests `/js/mrpunyapal/filament-infinite-select/components/infinite-select.js` and receives a 404, so the infinite scroll component cannot initialize.
+The JavaScript asset has not been published. Check whether this URL returns a 404 in your browser network tab:
 
-```bash
-php artisan filament:assets
+```
+/js/mrpunyapal/filament-infinite-select/components/infinite-select.js
 ```
 
-Then hard-refresh the page. To never think about it again, add the command to your `post-autoload-dump` scripts — see [Installation](/installation.md).
+Run `php artisan filament:assets` and reload the page. See [Installation](/installation.md) for how to automate this.
 
-## Options load once, then stop
+## Options stop loading after the first page
 
-Check that your closure's `hasMore` flag is computed correctly:
-
-- Fetch `$limit + 1` rows and set `hasMore = count > $limit`, or
-- Compare against a total: `($offset + $limit) < $total`
-
-If `hasMore` is always `false`, scrolling will not trigger further loads.
-
-## Search returns stale results
-
-Your closure must apply the `$search` parameter to every query — including offset pages. A common mistake is filtering only the first page.
-
-## Saved value shows as raw ID after reload
-
-Provide a label resolver so the component can render saved selections whose options are not in the first loaded page:
+Check how your closure computes `hasMore`. If it is always `false`, scrolling will not request more pages. Either compare against a total:
 
 ```php
-->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
+'hasMore' => ($offset + $limit) < $total,
 ```
 
-For multi-select use `getOptionLabelsUsing()` instead — see [Multiple Selection](/multiple-selection.md).
+or fetch one extra row and compare:
 
-## Values are silently dropped on save
+```php
+$rows = $query->skip($offset)->take($limit + 1)->get();
+$hasMore = $rows->count() > $limit;
+```
 
-This is standard Laravel mass-assignment protection, not the component. Make sure the attribute is fillable on your model (or that your relationship is configured for Filament's `saveRelationships()`).
+Also make sure `$search` is applied on every page of a search, not only the first.
 
-## Testing locally with a path repository
+## A saved value shows as its raw ID after reload
 
-When developing against a local clone of this package via a Composer `path` repository, remember the published copy under your app's `public/js/...` is a static snapshot — re-run `php artisan filament:assets` after rebuilding the package's JavaScript.
+The field cannot resolve labels for options that are not in the loaded pages. Add a label resolver:
+
+```php
+// Single select
+->getOptionLabelUsing(fn ($value) => User::find($value)?->name)
+
+// Multi select
+->getOptionLabelsUsing(fn (array $values) => User::whereIn('id', $values)->pluck('name', 'id')->all())
+```
+
+## Field values are dropped when saving
+
+This is Laravel mass assignment protection, not the component. Make sure the attribute is fillable on your model, or use a Filament relationship so `saveRelationships()` handles persistence.
+
+## Local development with a path repository
+
+When you require the package from a local clone through a Composer `path` repository, the published file under your app's `public/js/...` is a copy, not a link. After rebuilding the package JavaScript, run `php artisan filament:assets` again to refresh it.

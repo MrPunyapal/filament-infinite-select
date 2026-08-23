@@ -6,6 +6,6 @@
 - https://mrpunyapal.github.io/filament-infinite-select/configuration: Configuration
 - https://mrpunyapal.github.io/filament-infinite-select/: Filament Infinite Select
 - https://mrpunyapal.github.io/filament-infinite-select/installation: Installation
-- https://mrpunyapal.github.io/filament-infinite-select/multiple-selection: Multiple Selection
+- https://mrpunyapal.github.io/filament-infinite-select/multiple-selection: Multiple selection
 - https://mrpunyapal.github.io/filament-infinite-select/troubleshooting: Troubleshooting
 - https://mrpunyapal.github.io/filament-infinite-select/usage: Usage

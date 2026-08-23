@@ -1,6 +1,6 @@
 # Usage
 
-Use `InfiniteSelect` anywhere you would use Filament's `Select`. The only required method is `getOptionsWithPaginationUsing()`:
+Use `InfiniteSelect` in place of Filament's `Select`. The only required method is `getOptionsWithPaginationUsing()`:
 
 ```php
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
@@ -23,57 +23,59 @@ InfiniteSelect::make('user_id')
     ->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
 ```
 
-The component is non-native and searchable by default — no extra configuration needed.
+The component sets `native(false)` and `searchable()` for you.
 
 ## Closure parameters
 
-The `getOptionsWithPaginationUsing()` closure receives these injected parameters:
+`getOptionsWithPaginationUsing()` receives these parameters by name:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `$offset` | `int` | Current offset for pagination |
-| `$limit` | `int` | Number of items to fetch (from `perPage()`, default 15) |
-| `$search` | `?string` | Current search query, if any |
-| `$query`  | `?string` | Alias of `$search` |
+| `$offset` | `int` | Number of rows to skip |
+| `$limit` | `int` | Number of rows to return, taken from `perPage()` |
+| `$search` | `?string` | Current search term |
+| `$query` | `?string` | Alias for `$search` |
 
-Plus all standard Filament injection parameters (`$component`, `$get`, `$livewire`, `$record`, ...).
+Standard Filament injection (`$component`, `$get`, `$livewire`, `$record`, and so on) also works.
 
 ## Return value
 
-Return an array with an `options` key/value map and a `hasMore` flag:
+Return an array with an options map under the `options` key and a boolean under `hasMore`:
 
 ```php
 [
     'options' => ['value1' => 'Label 1', 'value2' => 'Label 2'],
-    'hasMore' => true, // whether more pages exist after this one
+    'hasMore' => true,
 ]
 ```
 
-If the closure returns a plain array without keys, it is treated as the options map with `hasMore: false`. Collections and other `Arrayable` values are converted automatically — returning `->pluck('name', 'id')` directly works fine.
+Three shortcuts are supported:
 
-## The `hasMore` flag
+- Returning a plain array with no `options` key treats it as the options map with `hasMore: false`
+- Collections and other `Arrayable` values are converted to arrays, so returning `->pluck('name', 'id')` directly is fine
+- The same conversions apply to the `options` value itself when it is an `Arrayable`
 
-The most efficient pattern is fetching **one extra row** to detect the next page instead of running a separate `count()` query:
+## Detecting the next page
+
+Comparing against a total count works but runs a second query. Fetching one extra row avoids that:
 
 ```php
 $rows = $query->skip($offset)->take($limit + 1)->get();
 $hasMore = $rows->count() > $limit;
 
 return [
-    'options' => ($hasMore ? $rows->pop() : $rows)->pluck('name', 'id')->all(),
+    'options' => $rows->take($limit)->pluck('name', 'id')->all(),
     'hasMore' => $hasMore,
 ];
 ```
 
 ## Displaying saved values
 
-For fields backed by a relationship or column, provide label resolvers so saved selections render correctly even when their options are not on page one:
+Saved selections may not be part of the loaded pages. Give the field a label resolver so they display correctly on edit forms:
 
 ```php
-InfiniteSelect::make('user_id')
-    ->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
+// Single select
+->getOptionLabelUsing(fn ($value) => User::find($value)?->name);
 ```
 
-## Headless / standalone usage
-
-The component works outside panels too. In any Livewire component using Filament forms, call the same methods on your schema — assets are resolved automatically via `x-load`, so nothing needs publishing in your app beyond `php artisan filament:assets`.
+For multiple selection use `getOptionLabelsUsing()`. See [Multiple selection](/multiple-selection.md).

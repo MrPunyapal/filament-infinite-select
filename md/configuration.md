@@ -1,8 +1,8 @@
 # Configuration
 
-All options accept a static value or a closure evaluated at render time.
+Every option accepts a static value or a closure evaluated at render time.
 
-## `perPage(int | Closure $perPage)`
+## perPage
 
 Number of options fetched per page. Default: `15`.
 
@@ -10,38 +10,44 @@ Number of options fetched per page. Default: `15`.
 InfiniteSelect::make('user_id')->perPage(25);
 ```
 
-## `preloadFirstPage(bool | Closure $condition = true)`
+## preloadFirstPage
 
-Render the first page server-side during the initial request instead of fetching it via a Livewire round-trip when the dropdown opens. Useful when you want results visible instantly. Default: `false`.
+When enabled, the first page is rendered server side during the initial request instead of being fetched through a Livewire request when the dropdown opens. Default: `false`.
 
 ```php
 InfiniteSelect::make('user_id')->preloadFirstPage();
 ```
 
-## `searchDebounce(int | Closure $milliseconds)`
+Accepts a boolean or a condition:
 
-Debounce delay for the search input, in milliseconds. Each keystroke resets the timer; only after this delay is a new page requested from the server. Default: `300`.
+```php
+->preloadFirstPage(fn () => $this->record?->exists)
+```
+
+## searchDebounce
+
+Delay in milliseconds between the last keystroke and the search query. Each keystroke resets the timer. Default: `300`.
 
 ```php
 InfiniteSelect::make('user_id')->searchDebounce(500);
 ```
 
-## `scrollThreshold(int | Closure $pixels)`
+## scrollThreshold
 
-Distance in pixels from the bottom of the dropdown that triggers loading the next page. Lower values load later; higher values prefetch earlier. Default: `50`.
+Distance in pixels from the bottom of the dropdown at which the next page is requested. Lower values load later, higher values load earlier. Default: `50`.
 
 ```php
 InfiniteSelect::make('user_id')->scrollThreshold(100);
 ```
 
-## Combining everything
+## All options together
 
 ```php
 InfiniteSelect::make('user_id')
     ->perPage(25)
     ->searchDebounce(500)
     ->scrollThreshold(100)
-    ->preloadFirstPage(fn () => ! app()->isProduction())
+    ->preloadFirstPage()
     ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
         // ...
     });

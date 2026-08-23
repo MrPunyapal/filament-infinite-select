@@ -1,6 +1,6 @@
-# Multiple Selection
+# Multiple selection
 
-Enable multi-select with the standard Filament `multiple()` method. The dropdown stays open between picks, and selected options appear as removable badges.
+Add `multiple()` to allow several picks. The dropdown stays open between picks and each selected option shows as a removable badge.
 
 ```php
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
@@ -15,18 +15,18 @@ InfiniteSelect::make('user_ids')
     );
 ```
 
-## Label resolution for saved values
+## Label resolution
 
-With lazy loading, saved options may not exist on page one. `getOptionLabelsUsing()` resolves their labels server-side so badges render correctly after a reload:
+Saved options may not be in the loaded pages. The `getOptionLabelsUsing()` closure resolves their labels server side so the badges render with names instead of raw IDs after a reload.
 
-| Method | Purpose |
-|--------|---------|
-| `getOptionLabelUsing()` | Single select: label for one saved value |
-| `getOptionLabelsUsing()` | Multi select: labels for an array of saved values |
+| Method | Used for |
+|--------|----------|
+| `getOptionLabelUsing()` | Single select, one saved value |
+| `getOptionLabelsUsing()` | Multi select, an array of saved values |
 
-## Persisting arrays
+## Storing the values
 
-Store selections as JSON when they don't map to a pivot table:
+The field state is a plain array of values. For pivot tables, a standard `BelongsToMany` relationship works with Filament's `saveRelationships()`. Without a relationship table, store the array as JSON:
 
 ```php
 // Migration
@@ -40,5 +40,3 @@ protected function casts(): array
     ];
 }
 ```
-
-For relationships, use a standard `BelongsToMany` — the field state is a plain array of values, so it works with `saveRelationships()` out of the box.
