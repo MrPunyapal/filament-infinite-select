@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use Docsmith\Docsmith;
 
@@ -11,8 +11,8 @@ $editBranch = getenv('DOCS_EDIT_BRANCH') ?: 'main';
 $baseUrl = getenv('DOCS_BASE_URL') ?: '/filament-infinite-select/';
 
 Docsmith::make()
-    ->source(__DIR__.'/md')
-    ->output(__DIR__.'/docs')
+    ->source(__DIR__ . '/md')
+    ->output(__DIR__ . '/docs')
     ->title('Filament Infinite Select')
     ->description('A Filament Select component with infinite scroll lazy loading for large option datasets.')
     ->repositoryUrl('https://github.com/mrpunyapal/filament-infinite-select')
