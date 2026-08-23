@@ -3,6 +3,7 @@
 namespace MrPunyapal\FilamentInfiniteSelect;
 
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -36,7 +37,7 @@ class FilamentInfiniteSelectServiceProvider extends PackageServiceProvider
     }
 
     /**
-     * @return array<\Filament\Support\Assets\Asset>
+     * @return array<Asset>
      */
     protected function getAssets(): array
     {

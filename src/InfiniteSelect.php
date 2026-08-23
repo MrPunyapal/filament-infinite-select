@@ -17,6 +17,12 @@ class InfiniteSelect extends Select
 
     protected int | Closure $perPage = 15;
 
+    protected bool | Closure $preloadFirstPage = false;
+
+    protected int | Closure $searchDebounce = 300;
+
+    protected int | Closure $scrollThreshold = 50;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,6 +48,42 @@ class InfiniteSelect extends Select
     public function getPerPage(): int
     {
         return (int) $this->evaluate($this->perPage);
+    }
+
+    public function preloadFirstPage(bool | Closure $condition = true): static
+    {
+        $this->preloadFirstPage = $condition;
+
+        return $this;
+    }
+
+    public function shouldPreloadFirstPage(): bool
+    {
+        return (bool) $this->evaluate($this->preloadFirstPage);
+    }
+
+    public function searchDebounce(int | Closure $milliseconds): static
+    {
+        $this->searchDebounce = $milliseconds;
+
+        return $this;
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return (int) $this->evaluate($this->searchDebounce);
+    }
+
+    public function scrollThreshold(int | Closure $pixels): static
+    {
+        $this->scrollThreshold = $pixels;
+
+        return $this;
+    }
+
+    public function getScrollThreshold(): int
+    {
+        return (int) $this->evaluate($this->scrollThreshold);
     }
 
     public function hasOptionsWithPagination(): bool
@@ -71,6 +113,10 @@ class InfiniteSelect extends Select
 
         $options = $result['options'] ?? $result;
         $hasMore = $result['hasMore'] ?? false;
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
 
         return [
             'options' => $options,

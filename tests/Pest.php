@@ -1,5 +1,5 @@
 <?php
 
-use MrPunyapal\FilamentSelectWithLazyLoading\Tests\TestCase;
+use MrPunyapal\FilamentInfiniteSelect\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

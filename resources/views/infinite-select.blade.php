@@ -1,6 +1,5 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $extraInputAttributeBag = $getExtraInputAttributeBag();
     $canSelectPlaceholder = $canSelectPlaceholder();
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
@@ -8,9 +7,8 @@
     $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
     $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
+    $hasDynamicOptions = $hasDynamicOptions();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
-    $isRequired = $isRequired();
-    $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
@@ -27,9 +25,13 @@
     $statePath = $getStatePath();
     $state = $getState();
     $livewireKey = $getLivewireKey();
-    
+
     $hasInfiniteScroll = $hasOptionsWithPagination();
     $perPage = $getPerPage();
+    $searchDebounce = $getSearchDebounce();
+    $scrollThreshold = $getScrollThreshold();
+    $shouldPreload = $shouldPreloadFirstPage();
+    $preloadedOptions = $shouldPreload && $hasInfiniteScroll ? $getPaginatedOptionsForJs(0, null) : [];
 @endphp
 
 <x-dynamic-component
@@ -82,6 +84,11 @@
                         return await $wire.callSchemaComponentMethod(@js($key), 'getPaginatedOptionsForJs', { offset, search })
                     },
                     perPage: @js($perPage),
+                    searchDebounce: @js($searchDebounce),
+                    scrollThreshold: @js($scrollThreshold),
+                    loadingMessage: @js($getLoadingMessage()),
+                    preloaded: @js($shouldPreload),
+                    preloadedHasMore: @js($shouldPreload ? ($preloadedOptions['hasMore'] ?? false) : false),
                 })"
             @endif
         >
@@ -101,20 +108,40 @@
                                 )
                             },
                             getOptionsUsing: async () => {
-                                return await $wire.callSchemaComponentMethod(
-                                    @js($key),
-                                    'getOptionsForJs',
-                                )
+                                @if($hasInfiniteScroll)
+                                    @if($shouldPreload)
+                                        // Return preloaded options immediately
+                                        return @js($preloadedOptions['options'] ?? [])
+                                    @else
+                                        const result = await $wire.callSchemaComponentMethod(
+                                            @js($key),
+                                            'getPaginatedOptionsForJs',
+                                            { offset: 0, search: null }
+                                        )
+                                        return result?.options || []
+                                    @endif
+                                @else
+                                    return await $wire.callSchemaComponentMethod(
+                                        @js($key),
+                                        'getOptionsForJs',
+                                    )
+                                @endif
                             },
                             getSearchResultsUsing: async (search) => {
-                                return await $wire.callSchemaComponentMethod(
-                                    @js($key),
-                                    'getSearchResultsForJs',
-                                    { search },
-                                )
+                                @if($hasInfiniteScroll)
+                                    // For infinite scroll, return null to prevent Filament from processing search
+                                    // Our custom search listener handles this
+                                    return null
+                                @else
+                                    return await $wire.callSchemaComponentMethod(
+                                        @js($key),
+                                        'getSearchResultsForJs',
+                                        { search },
+                                    )
+                                @endif
                             },
-                            hasDynamicOptions: @js($hasDynamicOptions()),
-                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                            hasDynamicOptions: @js($hasInfiniteScroll ? true : $hasDynamicOptions),
+                            hasDynamicSearchResults: @js($hasInfiniteScroll ? false : $hasDynamicSearchResults()),
                             hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
@@ -131,7 +158,7 @@
                             maxItemsMessage: @js($getMaxItemsMessage()),
                             noOptionsMessage: @js($getNoOptionsMessage()),
                             noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                            options: @js($hasInfiniteScroll ? [] : $getOptionsForJs()),
+                            options: @js($shouldPreload && $hasInfiniteScroll ? ($preloadedOptions['options'] ?? []) : ($hasInfiniteScroll ? [] : $getOptionsForJs())),
                             optionsLimit: @js($getOptionsLimit()),
                             placeholder: @js($getPlaceholder()),
                             position: @js($getPosition()),
@@ -146,6 +173,7 @@
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
                         $isDisabled,
+                        $isReorderable,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"

@@ -8,8 +8,10 @@ A Filament Select component with infinite scroll lazy loading for options. Perfe
 
 ## Requirements
 
-- PHP 8.1+
-- Filament 4.x
+- PHP 8.2+
+- Filament 4.x / 5.x
+
+Works in any Filament context — panels, standalone Livewire forms (headless), or custom schema components. The Alpine component ships as a registered Filament asset, so no view publishing is required.
 
 ## Installation
 
@@ -53,6 +55,26 @@ InfiniteSelect::make('user_id')
 ```php
 InfiniteSelect::make('user_id')
     ->perPage(25)
+    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+        // ...
+    });
+```
+
+### Available Methods
+
+| Method | Default | Description |
+|--------|---------|-------------|
+| `perPage(int \| Closure)` | `15` | Number of options to fetch per page |
+| `preloadFirstPage(bool \| Closure)` | `false` | Load the first page server-side during render, instead of via a Livewire round-trip when the dropdown opens |
+| `searchDebounce(int \| Closure)` | `300` | Debounce delay in milliseconds for the search input |
+| `scrollThreshold(int \| Closure)` | `50` | Distance in pixels from the bottom of the dropdown that triggers loading the next page |
+
+```php
+InfiniteSelect::make('user_id')
+    ->perPage(25)
+    ->searchDebounce(500)
+    ->scrollThreshold(100)
+    ->preloadFirstPage()
     ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
         // ...
     });
