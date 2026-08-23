@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Selection | Filament Infinite Select</title>
+    <meta name="description" content="A Filament Select component with infinite scroll lazy loading for large option datasets.">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/app.css">
+    <script src="../assets/app.js" defer></script>
+</head>
+<body data-docsmith-root="../">
+    <div class="shell has-right-rail">
+        <aside class="sidebar" data-docsmith-sidebar>
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <h1 class="brand">Filament Infinite Select</h1>
+                    <p class="tagline">A Filament Select component with infinite scroll lazy loading for large option datasets.</p>
+                </div>
+                <button type="button" class="mobile-menu-toggle" data-docsmith-menu-toggle aria-expanded="false" aria-controls="docsmith-sidebar-panel" aria-label="Open menu"><svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mobile-menu-bars" d="M3.75 8.25h16.5M3.75 15.75h11"></path><path class="mobile-menu-close" d="M6 6l12 12M18 6L6 18"></path></svg><span class="sr-only">Toggle menu</span></button>
+            </div>
+            <div class="sidebar-panel" id="docsmith-sidebar-panel" data-docsmith-sidebar-panel>
+                
+                <div class="sidebar-actions"><a class="sidebar-action-link" href="https://github.com/mrpunyapal/filament-infinite-select">Repository</a><button type="button" class="theme-toggle" data-docsmith-theme-toggle>Theme</button></div>
+                <div class="search">
+                    <input type="search" placeholder="Search pages  (⌘K)" aria-label="Search pages" data-docsmith-search>
+                    <div class="search-results" data-docsmith-search-results hidden></div>
+                    <div class="search-empty" data-docsmith-empty>No pages match your search.</div>
+                </div>
+                <nav class="nav" data-docsmith-nav><a class="" href="../configuration/" data-nav-item data-title="Configuration" data-search="Configuration Configuration">Configuration</a><a class="" href="../" data-nav-item data-title="Filament Infinite Select" data-search="Filament Infinite Select Filament Infinite Select">Filament Infinite Select</a><a class="" href="../installation/" data-nav-item data-title="Installation" data-search="Installation Installation">Installation</a><a class="active" href="./" data-nav-item data-title="Multiple Selection" data-search="Multiple Selection Multiple Selection">Multiple Selection</a><a class="" href="../troubleshooting/" data-nav-item data-title="Troubleshooting" data-search="Troubleshooting Troubleshooting">Troubleshooting</a><a class="" href="../usage/" data-nav-item data-title="Usage" data-search="Usage Usage">Usage</a></nav>
+                <a class="docsmith-badge" href="https://github.com/MrPunyapal/docsmith" target="_blank" rel="noopener noreferrer" data-docsmith-badge aria-label="Built with DocSmith"><svg class="docsmith-badge-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.052C.4 11.692-.21 8.9 1.38 6.87 2.736 5.14 5.09 4.583 6.86 5.686 8 6.41 8.86 7.55 9.6 8.7c.74-1.15 1.6-2.29 2.74-3.014 1.77-1.103 4.124-.546 5.48 1.184 1.59 2.03.98 4.822-1.192 7.078C18.716 16.65 12 21 12 21z"/></svg><span class="docsmith-badge-text">Built with</span><span class="docsmith-badge-brand">DocSmith</span></a>
+            </div>
+        </aside>
+        <button type="button" class="sidebar-backdrop" data-docsmith-sidebar-backdrop aria-label="Close menu"></button>
+        <main class="content">
+            <article>
+                <header class="doc-head">
+                    
+                    <h1>Multiple Selection</h1>
+                    
+                </header>
+                <div class="doc-body">
+                    <p>Enable multi-select with the standard Filament <code>multiple()</code> method. The dropdown stays open between picks, and selected options appear as removable badges.</p>
+<pre class="phiki language-php github-light phiki-themes github-dark" data-language="php" style="background-color: #fff;color: #24292e;--phiki-dark-background-color: #24292e;--phiki-dark-color: #e1e4e8;"><code><span class="line"><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">use</span><span class="token"> </span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">MrPunyapal</span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">\</span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">FilamentInfiniteSelect</span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">\</span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">InfiniteSelect</span><span class="token">;</span><span class="token">
+</span></span><span class="line"><span class="token">
+</span></span><span class="line"><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">InfiniteSelect</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">::</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">make</span><span class="token">(</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">user_ids</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">)</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">multiple</span><span class="token">(</span><span class="token">)</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">getOptionsWithPaginationUsing</span><span class="token">(</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">function</span><span class="token"> </span><span class="token">(</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">int</span><span class="token"> </span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">offset</span><span class="token">,</span><span class="token"> </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">int</span><span class="token"> </span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">limit</span><span class="token">,</span><span class="token"> </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">?</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">string</span><span class="token"> </span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">search</span><span class="token">)</span><span class="token"> </span><span class="token">{</span><span class="token">
+</span></span><span class="line"><span class="token">        </span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">//</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;"> ...</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">
+</span></span><span class="line"><span class="token">    </span><span class="token">}</span><span class="token">)</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">getOptionLabelsUsing</span><span class="token">(</span><span class="token">
+</span></span><span class="line"><span class="token">        </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">fn</span><span class="token"> </span><span class="token">(</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">array</span><span class="token"> </span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">values</span><span class="token">)</span><span class="token"> </span><span class="token">=&gt;</span><span class="token"> </span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">User</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">::</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">whereIn</span><span class="token">(</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">id</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">,</span><span class="token"> </span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">values</span><span class="token">)</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">pluck</span><span class="token">(</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">name</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">,</span><span class="token"> </span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">id</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">)</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">all</span><span class="token">(</span><span class="token">)</span><span class="token">,</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token">)</span><span class="token">;</span><span class="token">
+</span></span></code></pre>
+<h2 id="label-resolution-for-saved-values">Label resolution for saved values</h2>
+<p>With lazy loading, saved options may not exist on page one. <code>getOptionLabelsUsing()</code> resolves their labels server-side so badges render correctly after a reload:</p>
+<div class="table-scroll"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getOptionLabelUsing()</code></td>
+<td>Single select: label for one saved value</td>
+</tr>
+<tr>
+<td><code>getOptionLabelsUsing()</code></td>
+<td>Multi select: labels for an array of saved values</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="persisting-arrays">Persisting arrays</h2>
+<p>Store selections as JSON when they don't map to a pivot table:</p>
+<pre class="phiki language-php github-light phiki-themes github-dark" data-language="php" style="background-color: #fff;color: #24292e;--phiki-dark-background-color: #24292e;--phiki-dark-color: #e1e4e8;"><code><span class="line"><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">//</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;"> Migration</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">
+</span></span><span class="line"><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">table</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">json</span><span class="token">(</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">user_ids</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">)</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">nullable</span><span class="token">(</span><span class="token">)</span><span class="token">;</span><span class="token">
+</span></span><span class="line"><span class="token">
+</span></span><span class="line"><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">//</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;"> Model</span><span class="token" style="color: #6a737d;--phiki-dark-color: #6a737d;">
+</span></span><span class="line"><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">protected</span><span class="token"> </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">function</span><span class="token"> </span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">casts</span><span class="token">(</span><span class="token">)</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">:</span><span class="token"> </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">array</span><span class="token">
+</span></span><span class="line"><span class="token">{</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">return</span><span class="token"> </span><span class="token">[</span><span class="token">
+</span></span><span class="line"><span class="token">        </span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">user_ids</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token"> </span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">=&gt;</span><span class="token"> </span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">array</span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">'</span><span class="token">,</span><span class="token">
+</span></span><span class="line"><span class="token">    </span><span class="token">]</span><span class="token">;</span><span class="token">
+</span></span><span class="line"><span class="token">}</span><span class="token">
+</span></span></code></pre>
+<p>For relationships, use a standard <code>BelongsToMany</code> — the field state is a plain array of values, so it works with <code>saveRelationships()</code> out of the box.</p>
+
+                </div>
+                <footer class="doc-meta">
+                    <a class="edit-link" href="https://github.com/mrpunyapal/filament-infinite-select/edit/main/md/multiple-selection.md">Edit this page</a>
+                </footer>
+            </article>
+            <nav class="pager" aria-label="Page navigation"><a class="pager-link" href="../installation/"><span>Previous</span><strong>Installation</strong></a><a class="pager-link pager-link-next" href="../troubleshooting/"><span>Next</span><strong>Troubleshooting</strong></a></nav>
+        </main>
+        <aside class="toc-sidebar" data-docsmith-toc><p class="toc-title">On this page</p><nav class="toc-links"><a class="toc-link toc-link-level-2" href="#label-resolution-for-saved-values" data-docsmith-toc-link="label-resolution-for-saved-values">Label resolution for saved values</a><a class="toc-link toc-link-level-2" href="#persisting-arrays" data-docsmith-toc-link="persisting-arrays">Persisting arrays</a></nav></aside>
+    </div>
+    <div class="search-overlay" data-docsmith-search-overlay hidden role="dialog" aria-label="Search documentation">
+    <div class="search-overlay-backdrop" data-docsmith-search-overlay-close></div>
+    <div class="search-overlay-panel">
+        <div class="search-overlay-input-wrap">
+            <svg class="search-overlay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" class="search-overlay-input" placeholder="Search documentation..." aria-label="Search documentation" data-docsmith-search-overlay-input autocomplete="off">
+            <kbd class="search-overlay-hint">ESC</kbd>
+        </div>
+        <div class="search-overlay-results" data-docsmith-search-overlay-results></div>
+        <div class="search-overlay-empty" data-docsmith-search-overlay-empty hidden>No results found.</div>
+    </div>
+</div>
+</body>
+</html>

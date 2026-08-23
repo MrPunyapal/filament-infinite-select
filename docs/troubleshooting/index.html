@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting | Filament Infinite Select</title>
+    <meta name="description" content="A Filament Select component with infinite scroll lazy loading for large option datasets.">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/app.css">
+    <script src="../assets/app.js" defer></script>
+</head>
+<body data-docsmith-root="../">
+    <div class="shell has-right-rail">
+        <aside class="sidebar" data-docsmith-sidebar>
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <h1 class="brand">Filament Infinite Select</h1>
+                    <p class="tagline">A Filament Select component with infinite scroll lazy loading for large option datasets.</p>
+                </div>
+                <button type="button" class="mobile-menu-toggle" data-docsmith-menu-toggle aria-expanded="false" aria-controls="docsmith-sidebar-panel" aria-label="Open menu"><svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="mobile-menu-bars" d="M3.75 8.25h16.5M3.75 15.75h11"></path><path class="mobile-menu-close" d="M6 6l12 12M18 6L6 18"></path></svg><span class="sr-only">Toggle menu</span></button>
+            </div>
+            <div class="sidebar-panel" id="docsmith-sidebar-panel" data-docsmith-sidebar-panel>
+                
+                <div class="sidebar-actions"><a class="sidebar-action-link" href="https://github.com/mrpunyapal/filament-infinite-select">Repository</a><button type="button" class="theme-toggle" data-docsmith-theme-toggle>Theme</button></div>
+                <div class="search">
+                    <input type="search" placeholder="Search pages  (⌘K)" aria-label="Search pages" data-docsmith-search>
+                    <div class="search-results" data-docsmith-search-results hidden></div>
+                    <div class="search-empty" data-docsmith-empty>No pages match your search.</div>
+                </div>
+                <nav class="nav" data-docsmith-nav><a class="" href="../configuration/" data-nav-item data-title="Configuration" data-search="Configuration Configuration">Configuration</a><a class="" href="../" data-nav-item data-title="Filament Infinite Select" data-search="Filament Infinite Select Filament Infinite Select">Filament Infinite Select</a><a class="" href="../installation/" data-nav-item data-title="Installation" data-search="Installation Installation">Installation</a><a class="" href="../multiple-selection/" data-nav-item data-title="Multiple Selection" data-search="Multiple Selection Multiple Selection">Multiple Selection</a><a class="active" href="./" data-nav-item data-title="Troubleshooting" data-search="Troubleshooting Troubleshooting">Troubleshooting</a><a class="" href="../usage/" data-nav-item data-title="Usage" data-search="Usage Usage">Usage</a></nav>
+                <a class="docsmith-badge" href="https://github.com/MrPunyapal/docsmith" target="_blank" rel="noopener noreferrer" data-docsmith-badge aria-label="Built with DocSmith"><svg class="docsmith-badge-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.052C.4 11.692-.21 8.9 1.38 6.87 2.736 5.14 5.09 4.583 6.86 5.686 8 6.41 8.86 7.55 9.6 8.7c.74-1.15 1.6-2.29 2.74-3.014 1.77-1.103 4.124-.546 5.48 1.184 1.59 2.03.98 4.822-1.192 7.078C18.716 16.65 12 21 12 21z"/></svg><span class="docsmith-badge-text">Built with</span><span class="docsmith-badge-brand">DocSmith</span></a>
+            </div>
+        </aside>
+        <button type="button" class="sidebar-backdrop" data-docsmith-sidebar-backdrop aria-label="Close menu"></button>
+        <main class="content">
+            <article>
+                <header class="doc-head">
+                    
+                    <h1>Troubleshooting</h1>
+                    
+                </header>
+                <div class="doc-body">
+                    <h2 id="select-renders-but-options-never-load">Select renders but options never load</h2>
+<p>The most common cause: the JavaScript asset was never published. The browser requests <code>/js/mrpunyapal/filament-infinite-select/components/infinite-select.js</code> and receives a 404, so the infinite scroll component cannot initialize.</p>
+<pre class="phiki language-shellscript github-light phiki-themes github-dark" data-language="shellscript" style="background-color: #fff;color: #24292e;--phiki-dark-background-color: #24292e;--phiki-dark-color: #e1e4e8;"><code><span class="line"><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">php</span><span class="token"> </span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">artisan</span><span class="token"> </span><span class="token" style="color: #032f62;--phiki-dark-color: #9ecbff;">filament:assets</span><span class="token">
+</span></span></code></pre>
+<p>Then hard-refresh the page. To never think about it again, add the command to your <code>post-autoload-dump</code> scripts — see <a href="/installation.md">Installation</a>.</p>
+<h2 id="options-load-once-then-stop">Options load once, then stop</h2>
+<p>Check that your closure's <code>hasMore</code> flag is computed correctly:</p>
+<ul>
+<li>Fetch <code>$limit + 1</code> rows and set <code>hasMore = count &gt; $limit</code>, or</li>
+<li>Compare against a total: <code>($offset + $limit) &lt; $total</code></li>
+</ul>
+<p>If <code>hasMore</code> is always <code>false</code>, scrolling will not trigger further loads.</p>
+<h2 id="search-returns-stale-results">Search returns stale results</h2>
+<p>Your closure must apply the <code>$search</code> parameter to every query — including offset pages. A common mistake is filtering only the first page.</p>
+<h2 id="saved-value-shows-as-raw-id-after-reload">Saved value shows as raw ID after reload</h2>
+<p>Provide a label resolver so the component can render saved selections whose options are not in the first loaded page:</p>
+<pre class="phiki language-php github-light phiki-themes github-dark" data-language="php" style="background-color: #fff;color: #24292e;--phiki-dark-background-color: #24292e;--phiki-dark-color: #e1e4e8;"><code><span class="line"><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">-&gt;</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">getOptionLabelUsing</span><span class="token">(</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">fn</span><span class="token"> </span><span class="token">(</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">value</span><span class="token">)</span><span class="token"> </span><span class="token">=&gt;</span><span class="token"> </span><span class="token" style="color: #005cc5;--phiki-dark-color: #79b8ff;">User</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">::</span><span class="token" style="color: #6f42c1;--phiki-dark-color: #b392f0;">find</span><span class="token">(</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">$</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">value</span><span class="token">)</span><span class="token" style="color: #d73a49;--phiki-dark-color: #f97583;">?-&gt;</span><span class="token" style="color: #24292e;--phiki-dark-color: #e1e4e8;">name</span><span class="token">)</span><span class="token">;</span><span class="token">
+</span></span></code></pre>
+<p>For multi-select use <code>getOptionLabelsUsing()</code> instead — see <a href="/multiple-selection.md">Multiple Selection</a>.</p>
+<h2 id="values-are-silently-dropped-on-save">Values are silently dropped on save</h2>
+<p>This is standard Laravel mass-assignment protection, not the component. Make sure the attribute is fillable on your model (or that your relationship is configured for Filament's <code>saveRelationships()</code>).</p>
+<h2 id="testing-locally-with-a-path-repository">Testing locally with a path repository</h2>
+<p>When developing against a local clone of this package via a Composer <code>path</code> repository, remember the published copy under your app's <code>public/js/...</code> is a static snapshot — re-run <code>php artisan filament:assets</code> after rebuilding the package's JavaScript.</p>
+
+                </div>
+                <footer class="doc-meta">
+                    <a class="edit-link" href="https://github.com/mrpunyapal/filament-infinite-select/edit/main/md/troubleshooting.md">Edit this page</a>
+                </footer>
+            </article>
+            <nav class="pager" aria-label="Page navigation"><a class="pager-link" href="../multiple-selection/"><span>Previous</span><strong>Multiple Selection</strong></a><a class="pager-link pager-link-next" href="../usage/"><span>Next</span><strong>Usage</strong></a></nav>
+        </main>
+        <aside class="toc-sidebar" data-docsmith-toc><p class="toc-title">On this page</p><nav class="toc-links"><a class="toc-link toc-link-level-2" href="#select-renders-but-options-never-load" data-docsmith-toc-link="select-renders-but-options-never-load">Select renders but options never load</a><a class="toc-link toc-link-level-2" href="#options-load-once-then-stop" data-docsmith-toc-link="options-load-once-then-stop">Options load once, then stop</a><a class="toc-link toc-link-level-2" href="#search-returns-stale-results" data-docsmith-toc-link="search-returns-stale-results">Search returns stale results</a><a class="toc-link toc-link-level-2" href="#saved-value-shows-as-raw-id-after-reload" data-docsmith-toc-link="saved-value-shows-as-raw-id-after-reload">Saved value shows as raw ID after reload</a><a class="toc-link toc-link-level-2" href="#values-are-silently-dropped-on-save" data-docsmith-toc-link="values-are-silently-dropped-on-save">Values are silently dropped on save</a><a class="toc-link toc-link-level-2" href="#testing-locally-with-a-path-repository" data-docsmith-toc-link="testing-locally-with-a-path-repository">Testing locally with a path repository</a></nav></aside>
+    </div>
+    <div class="search-overlay" data-docsmith-search-overlay hidden role="dialog" aria-label="Search documentation">
+    <div class="search-overlay-backdrop" data-docsmith-search-overlay-close></div>
+    <div class="search-overlay-panel">
+        <div class="search-overlay-input-wrap">
+            <svg class="search-overlay-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="search" class="search-overlay-input" placeholder="Search documentation..." aria-label="Search documentation" data-docsmith-search-overlay-input autocomplete="off">
+            <kbd class="search-overlay-hint">ESC</kbd>
+        </div>
+        <div class="search-overlay-results" data-docsmith-search-overlay-results></div>
+        <div class="search-overlay-empty" data-docsmith-search-overlay-empty hidden>No results found.</div>
+    </div>
+</div>
+</body>
+</html>

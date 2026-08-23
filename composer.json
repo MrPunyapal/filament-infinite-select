@@ -28,8 +28,9 @@
         "spatie/laravel-package-tools": "^1.16.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.18",
         "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.18",
+        "mrpunyapal/docsmith": "^0.3.1",
         "nunomaduro/collision": "^8.9",
         "orchestra/testbench": "^10.0",
         "pestphp/pest": "^4.0",

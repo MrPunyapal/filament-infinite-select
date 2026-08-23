@@ -6,6 +6,8 @@
 
 A Filament Select component with infinite scroll lazy loading for options. Perfect for handling large datasets without loading all options at once.
 
+📖 **[Read the documentation](https://mrpunyapal.github.io/filament-infinite-select)**
+
 ## Requirements
 
 - PHP 8.2+
