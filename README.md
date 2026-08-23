@@ -19,6 +19,22 @@ Works in any Filament context — panels, standalone Livewire forms (headless), 
 composer require mrpunyapal/filament-infinite-select
 ```
 
+Then publish the JavaScript asset:
+
+```bash
+php artisan filament:assets
+```
+
+> **Tip:** To keep assets up to date automatically after every `composer update`, add this to your project's `composer.json`:
+>
+> ```json
+> "post-autoload-dump": [
+>     "@php artisan filament:assets"
+> ]
+> ```
+>
+> (merging with any existing `post-autoload-dump` entries)
+
 ## Usage
 
 ### Basic Usage
