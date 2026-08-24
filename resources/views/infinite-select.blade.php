@@ -26,7 +26,7 @@
     $state = $getState();
     $livewireKey = $getLivewireKey();
 
-    $hasInfiniteScroll = $hasOptionsWithPagination();
+    $hasInfiniteScroll = $hasPaginatedOptions();
     $perPage = $getPerPage();
     $searchDebounce = $getSearchDebounce();
     $scrollThreshold = $getScrollThreshold();

@@ -13,7 +13,7 @@ class InfiniteSelect extends Select
 {
     protected string $view = 'filament-infinite-select::infinite-select';
 
-    protected ?Closure $getOptionsWithPaginationUsing = null;
+    protected ?Closure $getPaginatedOptionsUsing = null;
 
     protected int | Closure $perPage = 15;
 
@@ -31,11 +31,19 @@ class InfiniteSelect extends Select
         $this->searchable();
     }
 
-    public function getOptionsWithPaginationUsing(?Closure $callback): static
+    public function getPaginatedOptionsUsing(?Closure $callback): static
     {
-        $this->getOptionsWithPaginationUsing = $callback;
+        $this->getPaginatedOptionsUsing = $callback;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use getPaginatedOptionsUsing() instead.
+     */
+    public function getOptionsWithPaginationUsing(?Closure $callback): static
+    {
+        return $this->getPaginatedOptionsUsing($callback);
     }
 
     public function perPage(int | Closure $perPage): static
@@ -86,23 +94,32 @@ class InfiniteSelect extends Select
         return (int) $this->evaluate($this->scrollThreshold);
     }
 
+    public function hasPaginatedOptions(): bool
+    {
+        return $this->getPaginatedOptionsUsing !== null;
+    }
+
+    /**
+     * @deprecated Use hasPaginatedOptions() instead.
+     */
     public function hasOptionsWithPagination(): bool
     {
-        return $this->getOptionsWithPaginationUsing !== null;
+        return $this->hasPaginatedOptions();
     }
 
     public function getPaginatedOptions(int $offset, int $limit, ?string $search = null): array
     {
-        if (! $this->getOptionsWithPaginationUsing) {
+        if (! $this->getPaginatedOptionsUsing) {
             return [
                 'options' => [],
                 'hasMore' => false,
             ];
         }
 
-        $result = $this->evaluate($this->getOptionsWithPaginationUsing, [
+        $result = $this->evaluate($this->getPaginatedOptionsUsing, [
             'offset' => $offset,
             'limit' => $limit,
+            'page' => intdiv($offset, max($limit, 1)) + 1,
             'search' => $search,
             'query' => $search,
         ]);

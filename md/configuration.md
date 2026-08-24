@@ -48,7 +48,9 @@ InfiniteSelect::make('user_id')
     ->searchDebounce(500)
     ->scrollThreshold(100)
     ->preloadFirstPage()
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+    ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
         // ...
     });
 ```
+
+For offset, page-based, cursor, and remote API query styles, see [Pagination types](/pagination-types.md).

@@ -18,7 +18,7 @@ Every InfiniteSelect needs a pagination closure. It receives `$offset`, `$limit`
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_id')
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+    ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
         $query = User::query()->orderBy('name');
 
         if ($search) {

@@ -1,12 +1,12 @@
 # Usage
 
-Use `InfiniteSelect` in place of Filament's `Select`. The only required method is `getOptionsWithPaginationUsing()`:
+Use `InfiniteSelect` in place of Filament's `Select`. The only required method is `getPaginatedOptionsUsing()`:
 
 ```php
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_id')
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+    ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
         $query = User::query()->orderBy('name');
 
         if ($search) {
@@ -27,16 +27,19 @@ The component sets `native(false)` and `searchable()` for you.
 
 ## Closure parameters
 
-`getOptionsWithPaginationUsing()` receives these parameters by name:
+`getPaginatedOptionsUsing()` receives these parameters by name:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `$offset` | `int` | Number of rows to skip |
 | `$limit` | `int` | Number of rows to return, taken from `perPage()` |
+| `$page` | `int` | 1-based page number, computed as offset / limit + 1 |
 | `$search` | `?string` | Current search term |
 | `$query` | `?string` | Alias for `$search` |
 
-Standard Filament injection (`$component`, `$get`, `$livewire`, `$record`, and so on) also works.
+Standard Filament injection (`$component`, `$get`, `$livewire`, `$record`, and so on) also works. Inject only the parameters your closure declares.
+
+Different query styles (Laravel `paginate()`, `cursorPaginate()`, remote APIs) have their own recipes on the [Pagination types](/pagination-types.md) page.
 
 ## Return value
 

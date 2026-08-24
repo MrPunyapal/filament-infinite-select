@@ -2,6 +2,12 @@
 
 All notable changes to `filament-select-with-lazy-loading` will be documented in this file.
 
+## 0.2.0 - 2026-08-24
+
+- Rename `getOptionsWithPaginationUsing()` to `getPaginatedOptionsUsing()` and `hasOptionsWithPagination()` to `hasPaginatedOptions()`, matching Filament's setter and getter pairing. The old names remain as deprecated aliases.
+- Inject a computed `$page` parameter (1-based) into the pagination closure, so Laravel's `paginate($limit, ['*'], 'page', $page)` can be used directly.
+- Add a "Pagination types" documentation page covering offset, `paginate()`, `cursorPaginate()`, and remote API styles.
+
 ## 0.1.1 - 2026-08-24
 
 - Declare `illuminate/contracts` requirement explicitly (`^11.28|^12.0|^13.0`)

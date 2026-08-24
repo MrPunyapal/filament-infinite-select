@@ -7,7 +7,7 @@ use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_ids')
     ->multiple()
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+    ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
         // ...
     })
     ->getOptionLabelsUsing(

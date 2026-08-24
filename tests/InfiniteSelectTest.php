@@ -75,14 +75,14 @@ test('preload first page can be conditionally enabled', function () {
 test('has options with pagination returns false when no callback set', function () {
     $select = InfiniteSelect::make('test');
 
-    expect($select->hasOptionsWithPagination())->toBeFalse();
+    expect($select->hasPaginatedOptions())->toBeFalse();
 });
 
 test('has options with pagination returns true when callback is set', function () {
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(fn () => []);
+        ->getPaginatedOptionsUsing(fn () => []);
 
-    expect($select->hasOptionsWithPagination())->toBeTrue();
+    expect($select->hasPaginatedOptions())->toBeTrue();
 });
 
 test('get paginated options returns empty when no callback set', function () {
@@ -98,7 +98,7 @@ test('get paginated options returns empty when no callback set', function () {
 
 test('get paginated options returns data from callback', function () {
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) {
             return [
                 'options' => ['1' => 'Option 1', '2' => 'Option 2'],
                 'hasMore' => true,
@@ -118,7 +118,7 @@ test('get paginated options passes offset and limit to callback', function () {
     $receivedLimit = null;
 
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit) use (&$receivedOffset, &$receivedLimit) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) use (&$receivedOffset, &$receivedLimit) {
             $receivedOffset = $offset;
             $receivedLimit = $limit;
 
@@ -135,7 +135,7 @@ test('get paginated options passes search query to callback', function () {
     $receivedSearch = null;
 
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) use (&$receivedSearch) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) use (&$receivedSearch) {
             $receivedSearch = $search;
 
             return ['options' => [], 'hasMore' => false];
@@ -148,7 +148,7 @@ test('get paginated options passes search query to callback', function () {
 
 test('get paginated options handles callback returning just array', function () {
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function () {
+        ->getPaginatedOptionsUsing(function () {
             return ['1' => 'Option 1', '2' => 'Option 2'];
         });
 
@@ -166,7 +166,7 @@ test('get paginated options handles arrayable results', function () {
     expect($pages)->toBeInstanceOf(Arrayable::class);
 
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function () use ($pages) {
+        ->getPaginatedOptionsUsing(function () use ($pages) {
             return [
                 'options' => $pages,
                 'hasMore' => false,
@@ -183,7 +183,7 @@ test('get paginated options handles arrayable results', function () {
 test('get paginated options for js transforms options correctly', function () {
     $select = InfiniteSelect::make('test')
         ->perPage(10)
-        ->getOptionsWithPaginationUsing(function () {
+        ->getPaginatedOptionsUsing(function () {
             return [
                 'options' => ['1' => 'Option 1', '2' => 'Option 2'],
                 'hasMore' => true,
@@ -208,7 +208,7 @@ test('get paginated options for js uses configured per page', function () {
 
     $select = InfiniteSelect::make('test')
         ->perPage(25)
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit) use (&$receivedLimit) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) use (&$receivedLimit) {
             $receivedLimit = $limit;
 
             return ['options' => [], 'hasMore' => false];
@@ -227,7 +227,7 @@ test('pagination works with simulated dataset', function () {
 
     $select = InfiniteSelect::make('test')
         ->perPage(10)
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit) use ($dataset) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) use ($dataset) {
             $slice = array_slice($dataset, $offset, $limit + 1, preserve_keys: true);
             $hasMore = count($slice) > $limit;
 
@@ -266,7 +266,7 @@ test('search filters results correctly', function () {
 
     $select = InfiniteSelect::make('test')
         ->perPage(50)
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) use ($dataset) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) use ($dataset) {
             $filtered = $dataset->filter(
                 fn (string $title) => $search === null || str_contains(strtolower($title), strtolower($search)),
             );
@@ -302,7 +302,7 @@ test('has more flag is false when results are less than limit', function () {
 
     $select = InfiniteSelect::make('test')
         ->perPage(10)
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit) use ($dataset) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) use ($dataset) {
             $slice = array_slice($dataset, $offset, $limit + 1, preserve_keys: true);
             $hasMore = count($slice) > $limit;
 
@@ -324,7 +324,7 @@ test('has more flag is false when results are less than limit', function () {
 
 test('component renders with correct view', function () {
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(fn () => ['options' => [], 'hasMore' => false]);
+        ->getPaginatedOptionsUsing(fn () => ['options' => [], 'hasMore' => false]);
 
     expect($select->getView())->toBe('filament-infinite-select::infinite-select');
 });
@@ -332,7 +332,7 @@ test('component renders with correct view', function () {
 test('pagination handles empty search results', function () {
     $select = InfiniteSelect::make('test')
         ->perPage(10)
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
             if ($search === 'NonExistentSearchTerm12345') {
                 return ['options' => [], 'hasMore' => false];
             }
@@ -350,7 +350,7 @@ test('pagination callback receives query parameter alias', function () {
     $receivedQuery = null;
 
     $select = InfiniteSelect::make('test')
-        ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search, ?string $query) use (&$receivedQuery) {
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search, ?string $query) use (&$receivedQuery) {
             $receivedQuery = $query;
 
             return ['options' => [], 'hasMore' => false];
@@ -399,4 +399,55 @@ test('scroll threshold accepts closure', function () {
         ->scrollThreshold(fn () => 75);
 
     expect($select->getScrollThreshold())->toBe(75);
+});
+
+test('deprecated getOptionsWithPaginationUsing delegates to getPaginatedOptionsUsing', function () {
+    $select = InfiniteSelect::make('test')
+        ->getOptionsWithPaginationUsing(fn () => ['options' => ['1' => 'Option 1'], 'hasMore' => false]);
+
+    expect($select->hasPaginatedOptions())->toBeTrue();
+    expect($select->getPaginatedOptions(0, 15))->toBe([
+        'options' => ['1' => 'Option 1'],
+        'hasMore' => false,
+    ]);
+});
+
+test('deprecated hasOptionsWithPagination delegates to hasPaginatedOptions', function () {
+    $select = InfiniteSelect::make('test')
+        ->getPaginatedOptionsUsing(fn () => []);
+
+    expect($select->hasOptionsWithPagination())->toBeTrue();
+});
+
+test('pagination callback receives computed page number', function () {
+    $receivedPage = null;
+
+    $select = InfiniteSelect::make('test')
+        ->perPage(15)
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search, int $page) use (&$receivedPage) {
+            $receivedPage = $page;
+
+            return ['options' => [], 'hasMore' => false];
+        });
+
+    $select->getPaginatedOptions(30, 15);
+
+    expect($receivedPage)->toBe(3);
+});
+
+test('page number resets correctly for first page and handles zero limit safely', function () {
+    $pages = [];
+
+    $select = InfiniteSelect::make('test')
+        ->getPaginatedOptionsUsing(function (int $offset, int $limit) use (&$pages) {
+            $pages[] = (intdiv($offset, max($limit, 1)) + 1);
+
+            return ['options' => [], 'hasMore' => false];
+        });
+
+    $select->getPaginatedOptions(0, 15);
+    $select->getPaginatedOptions(15, 15);
+    $select->getPaginatedOptions(45, 15);
+
+    expect($pages)->toBe([1, 2, 4]);
 });

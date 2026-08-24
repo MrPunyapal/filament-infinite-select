@@ -24,6 +24,7 @@ The documentation is available at [mrpunyapal.github.io/filament-infinite-select
 - [Installation](https://mrpunyapal.github.io/filament-infinite-select/installation)
 - [Usage](https://mrpunyapal.github.io/filament-infinite-select/usage)
 - [Configuration](https://mrpunyapal.github.io/filament-infinite-select/configuration)
+- [Pagination types](https://mrpunyapal.github.io/filament-infinite-select/pagination-types)
 - [Multiple selection](https://mrpunyapal.github.io/filament-infinite-select/multiple-selection)
 - [Troubleshooting](https://mrpunyapal.github.io/filament-infinite-select/troubleshooting)
 
@@ -41,7 +42,7 @@ php artisan boost:install
 use MrPunyapal\FilamentInfiniteSelect\InfiniteSelect;
 
 InfiniteSelect::make('user_id')
-    ->getOptionsWithPaginationUsing(function (int $offset, int $limit, ?string $search) {
+    ->getPaginatedOptionsUsing(function (int $offset, int $limit, ?string $search) {
         $query = User::query()->orderBy('name');
 
         if ($search) {
