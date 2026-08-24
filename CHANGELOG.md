@@ -2,6 +2,14 @@
 
 All notable changes to `filament-select-with-lazy-loading` will be documented in this file.
 
+## 0.1.1 - 2026-08-24
+
+- Declare `illuminate/contracts` requirement explicitly (`^11.28|^12.0|^13.0`)
+- Add documentation site built with docsmith (source in `md/`, published via GitHub Pages)
+- Rewrite README and documentation pages
+- Fix test suite failing on environments without a coverage driver by removing the unconditional coverage config from `phpunit.xml.dist`
+- Modernize the CI matrix: PHP 8.3 / 8.4 against Filament 5.x, plus Filament 4.x and Windows jobs
+
 ## 0.1.0 - 2026-08-24
 
 Initial release.
