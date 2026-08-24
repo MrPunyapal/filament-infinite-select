@@ -4,6 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
 ![PHP Version Compatibility](https://badge.laravel.cloud/php-badge/mrpunyapal/filament-infinite-select)
 ![Laravel Version Compatibility](https://badge.laravel.cloud/badge/mrpunyapal/filament-infinite-select)
+![Filament Version Compatibility](https://badge.laravel.cloud/filament-badge/mrpunyapal/filament-infinite-select)
 
 A Filament form component that loads select options one page at a time as the user scrolls. Use it when a select can contain hundreds or thousands of options and loading them all at once is too slow.
 
