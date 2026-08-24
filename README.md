@@ -2,9 +2,10 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
 [![Total Downloads](https://img.shields.io/packagist/dt/mrpunyapal/filament-infinite-select.svg?style=flat-square)](https://packagist.org/packages/mrpunyapal/filament-infinite-select)
-![PHP Version Compatibility](https://badge.laravel.cloud/php-badge/mrpunyapal/filament-infinite-select)
-![Laravel Version Compatibility](https://badge.laravel.cloud/badge/mrpunyapal/filament-infinite-select)
-![Filament Version Compatibility](https://badge.laravel.cloud/filament-badge/mrpunyapal/filament-infinite-select)
+[![Laravel Compatibility](https://badge.laravel.cloud/badge/MrPunyapal/filament-infinite-select)](https://packagist.org/packages/MrPunyapal/filament-infinite-select)
+[![Filament Compatibility](https://badge.laravel.cloud/filament-badge/MrPunyapal/filament-infinite-select)](https://packagist.org/packages/MrPunyapal/filament-infinite-select)
+[![PHP Compatibility](https://badge.laravel.cloud/php-badge/MrPunyapal/filament-infinite-select)](https://packagist.org/packages/MrPunyapal/filament-infinite-select)
+[![Laravel Boost](https://badge.laravel.cloud/boost-badge.svg)](https://github.com/laravel/boost)
 
 A Filament form component that loads select options one page at a time as the user scrolls. Use it when a select can contain hundreds or thousands of options and loading them all at once is too slow.
 
@@ -25,6 +26,14 @@ The documentation is available at [mrpunyapal.github.io/filament-infinite-select
 - [Configuration](https://mrpunyapal.github.io/filament-infinite-select/configuration)
 - [Multiple selection](https://mrpunyapal.github.io/filament-infinite-select/multiple-selection)
 - [Troubleshooting](https://mrpunyapal.github.io/filament-infinite-select/troubleshooting)
+
+Using AI agents (Claude Code, Cursor, Boost, ...)? The package ships an installable skill:
+
+```bash
+npx skills add MrPunyapal/filament-infinite-select/resources/boost/skills
+# or, in a Laravel project with Boost:
+php artisan boost:install
+```
 
 ## Quick example
 
