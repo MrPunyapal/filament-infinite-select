@@ -27,7 +27,7 @@ InfiniteSelect::make('user_id')
 
         return [
             'options' => $query->skip($offset)->take($limit)->pluck('name', 'id')->all(),
-            'hasMore' => ($offset + $limit) < User::count(),
+            'hasMore' => ($offset + $limit) < (clone $query)->count(),
         ];
     });
 ```
