@@ -6,6 +6,6 @@
         "dev": "esbuild resources/js/index.js --bundle --keep-names --format=esm --outfile=resources/dist/infinite-select.js --watch"
     },
     "devDependencies": {
-        "esbuild": "^0.19.2"
+        "esbuild": "^0.28.2"
     }
 }
