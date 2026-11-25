@@ -2,6 +2,10 @@
 
 All notable changes to `filament-select-with-lazy-loading` will be documented in this file.
 
+## 0.2.1 - 2026-11-25
+
+- Add PHP 8.6 to the CI test matrix for Filament 5.
+
 ## 0.2.0 - 2026-08-24
 
 - Rename `getOptionsWithPaginationUsing()` to `getPaginatedOptionsUsing()` and `hasOptionsWithPagination()` to `hasPaginatedOptions()`, matching Filament's setter and getter pairing. The old names remain as deprecated aliases.
