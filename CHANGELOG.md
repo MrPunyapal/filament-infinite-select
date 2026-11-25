@@ -2,6 +2,14 @@
 
 All notable changes to `filament-select-with-lazy-loading` will be documented in this file.
 
+## v0.2.2 - 2026-11-25
+
+### What's Changed
+
+- Fix the release changelog job by pinning the updater to a version that uses PHP 8.5.
+
+**Full Changelog**: https://github.com/MrPunyapal/filament-infinite-select/compare/v0.2.1...v0.2.2
+
 ## 0.2.1 - 2026-11-25
 
 - Add PHP 8.6 to the CI test matrix for Filament 5.
