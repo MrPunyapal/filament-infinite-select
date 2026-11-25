@@ -41,6 +41,10 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
           coverage: none
 
+      - name: Use Pest 5 for PHP 8.6
+        if: matrix.php == '8.6'
+        run: composer require --dev "pestphp/pest:^5.0" "pestphp/pest-plugin-laravel:^5.0" --no-interaction --no-update
+
       - name: Setup problem matchers
         run: |
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
